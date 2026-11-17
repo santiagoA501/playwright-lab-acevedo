@@ -1,35 +1,38 @@
 ﻿import { test, expect } from '@playwright/test';
+import { LoginPage } from '../pages/LoginPage';
+import { InventoryPage } from '../pages/InventoryPage';
 
-test('CP-001 Login exitoso', { tag: '@smoke', annotation: { type: 'Caso de prueba', description: 'CP-001' } }, async ({ page }) => {
-  await page.goto('/');
-  await page.getByPlaceholder('Username').fill('standard_user');
-  await page.getByPlaceholder('Password').fill('secret_sauce');
-  await page.getByRole('button', { name: 'Login' }).click();
+test.describe('Inicio de sesion', () => {
+  let login: LoginPage;
 
-  await expect(page).toHaveURL(/\/inventory\.html$/);
-  await expect(page.getByText('Products', { exact: true })).toBeVisible();
-});
+  test.beforeEach(async ({ page }) => {
+    login = new LoginPage(page);
+    await login.goto();
+  });
 
-test('CP-002 Login fallido con contraseña incorrecta', async ({ page }) => {
-  await page.goto('/');
-  await page.getByPlaceholder('Username').fill('standard_user');
-  await page.getByPlaceholder('Password').fill('incorrecta');
-  await page.getByRole('button', { name: 'Login' }).click();
+  test('CP-001 Login exitoso', {
+    tag: '@smoke',
+    annotation: { type: 'Caso de prueba', description: 'CP-001' },
+  }, async ({ page }) => {
+    await login.login('standard_user', 'secret_sauce');
 
-  await expect(page.locator('[data-test="error"]')).toHaveText(
-    'Epic sadface: Username and password do not match any user in this service'
-  );
-  await expect(page).toHaveURL('https://www.saucedemo.com/');
-});
+    await expect(page).toHaveURL(/\/inventory\.html$/);
+    await expect(new InventoryPage(page).title).toBeVisible();
+  });
 
-test('CP-003 Login fallido con usuario bloqueado', async ({ page }) => {
-  await page.goto('/');
-  await page.getByPlaceholder('Username').fill('locked_out_user');
-  await page.getByPlaceholder('Password').fill('secret_sauce');
-  await page.getByRole('button', { name: 'Login' }).click();
+  test('CP-002 Login fallido con clave incorrecta', async ({ page }) => {
+    await login.login('standard_user', 'incorrecta');
 
-  await expect(page.locator('[data-test="error"]')).toHaveText(
-    'Epic sadface: Sorry, this user has been locked out.'
-  );
-  await expect(page).toHaveURL('https://www.saucedemo.com/');
+    await expect(login.errorMessage).toContainText(
+      'Username and password do not match any user in this service'
+    );
+    await expect(page).toHaveURL('https://www.saucedemo.com/');
+  });
+
+  test('CP-003 Login fallido con usuario bloqueado', async ({ page }) => {
+    await login.login('locked_out_user', 'secret_sauce');
+
+    await expect(login.errorMessage).toContainText('Sorry, this user has been locked out.');
+    await expect(page).toHaveURL('https://www.saucedemo.com/');
+  });
 });
