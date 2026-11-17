@@ -1,4 +1,9 @@
-﻿import { defineConfig, devices } from '@playwright/test';
+﻿import { config as loadEnv } from 'dotenv';
+import { resolve } from 'node:path';
+
+loadEnv({ path: resolve(__dirname, '.env') });
+
+import { defineConfig, devices } from '@playwright/test';
 
 /**
  * Read environment variables from file.

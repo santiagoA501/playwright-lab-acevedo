@@ -1,27 +1,9 @@
-﻿import { test, expect } from '@playwright/test';
-import { LoginPage } from '../pages/LoginPage';
-import { InventoryPage } from '../pages/InventoryPage';
-import { CartPage } from '../pages/CartPage';
-import { CheckoutPage } from '../pages/CheckoutPage';
+﻿import { test, expect } from '../fixtures/fixtures';
 
 const mochila = 'Sauce Labs Backpack';
 
 test.describe('Proceso de compra', () => {
-  let inventory: InventoryPage;
-  let cart: CartPage;
-  let checkout: CheckoutPage;
-
-  test.beforeEach(async ({ page }) => {
-    const login = new LoginPage(page);
-    inventory = new InventoryPage(page);
-    cart = new CartPage(page);
-    checkout = new CheckoutPage(page);
-
-    await login.goto();
-    await login.login('standard_user', 'secret_sauce');
-  });
-
-  test('CP-011 Compra completa de un producto', async () => {
+  test('CP-011 Compra completa de un producto', async ({ inventory, cartPage: cart, checkoutPage: checkout }) => {
     await inventory.addToCart(mochila);
     await inventory.goToCart();
     await expect(cart.item(mochila)).toBeVisible();
@@ -33,7 +15,7 @@ test.describe('Proceso de compra', () => {
     await expect(checkout.completeHeader).toBeVisible();
   });
 
-  test('CP-012 Checkout sin nombre muestra error', async ({ page }) => {
+  test('CP-012 Checkout sin nombre muestra error', async ({ inventory, cartPage: cart, checkoutPage: checkout, page }) => {
     await inventory.addToCart(mochila);
     await inventory.goToCart();
     await cart.checkout();

@@ -1,26 +1,18 @@
-﻿import { test, expect } from '@playwright/test';
-import { LoginPage } from '../pages/LoginPage';
+﻿import { test, expect } from '../fixtures/fixtures';
 import { InventoryPage } from '../pages/InventoryPage';
 
 test.describe('Inicio de sesion', () => {
-  let login: LoginPage;
-
-  test.beforeEach(async ({ page }) => {
-    login = new LoginPage(page);
-    await login.goto();
-  });
-
   test('CP-001 Login exitoso', {
     tag: '@smoke',
     annotation: { type: 'Caso de prueba', description: 'CP-001' },
-  }, async ({ page }) => {
+  }, async ({ loginPage: login, page }) => {
     await login.login('standard_user', 'secret_sauce');
 
     await expect(page).toHaveURL(/\/inventory\.html$/);
     await expect(new InventoryPage(page).title).toBeVisible();
   });
 
-  test('CP-002 Login fallido con clave incorrecta', async ({ page }) => {
+  test('CP-002 Login fallido con clave incorrecta', async ({ loginPage: login, page }) => {
     await login.login('standard_user', 'incorrecta');
 
     await expect(login.errorMessage).toContainText(
@@ -29,7 +21,7 @@ test.describe('Inicio de sesion', () => {
     await expect(page).toHaveURL('https://www.saucedemo.com/');
   });
 
-  test('CP-003 Login fallido con usuario bloqueado', async ({ page }) => {
+  test('CP-003 Login fallido con usuario bloqueado', async ({ loginPage: login, page }) => {
     await login.login('locked_out_user', 'secret_sauce');
 
     await expect(login.errorMessage).toContainText('Sorry, this user has been locked out.');
