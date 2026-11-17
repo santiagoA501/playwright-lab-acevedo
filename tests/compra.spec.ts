@@ -1,4 +1,5 @@
-﻿import { test, expect } from '../fixtures/fixtures';
+﻿import { evidenciaElemento } from '../utils/acciones';
+import { test, expect } from '../fixtures/fixtures';
 
 const mochila = 'Sauce Labs Backpack';
 
@@ -7,12 +8,14 @@ test.describe('Proceso de compra', () => {
     await inventory.addToCart(mochila);
     await inventory.goToCart();
     await expect(cart.item(mochila)).toBeVisible();
+    await evidenciaElemento(cart.item(mochila), 'Verificar mochila en el carrito');
 
     await cart.checkout();
     await checkout.fillInformation('Ana', 'Perez', '110111');
     await checkout.finish();
 
     await expect(checkout.completeHeader).toBeVisible();
+    await evidenciaElemento(checkout.completeHeader, 'Verificar confirmacion de compra');
   });
 
   test('CP-012 Checkout sin nombre muestra error', async ({ inventory, cartPage: cart, checkoutPage: checkout, page }) => {
@@ -22,6 +25,7 @@ test.describe('Proceso de compra', () => {
     await checkout.fillInformation('', 'Perez', '110111');
 
     await expect(checkout.errorMessage).toContainText('First Name is required');
+    await evidenciaElemento(checkout.errorMessage, 'Verificar error de nombre obligatorio');
     await expect(page).toHaveURL(/\/checkout-step-one\.html$/);
   });
 });

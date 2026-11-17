@@ -1,4 +1,5 @@
-﻿import type { Locator, Page } from '@playwright/test';
+﻿import { clic } from '../utils/acciones';
+import type { Locator, Page } from '@playwright/test';
 
 export class CartPage {
   readonly items: Locator;
@@ -14,6 +15,6 @@ export class CartPage {
   }
 
   async checkout() {
-    await this.checkoutButton.click();
+    await clic(this.checkoutButton, 'Clic en Checkout');
   }
 }

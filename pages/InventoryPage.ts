@@ -1,4 +1,5 @@
-﻿import type { Locator, Page } from '@playwright/test';
+﻿import { clic, seleccionar } from '../utils/acciones';
+import type { Locator, Page } from '@playwright/test';
 
 export class InventoryPage {
   readonly title: Locator;
@@ -30,18 +31,18 @@ export class InventoryPage {
   }
 
   async addToCart(name: string) {
-    await this.addButton(name).click();
+    await clic(this.addButton(name), 'Agregar ' + name + ' al carrito');
   }
 
   async removeFromCart(name: string) {
-    await this.removeButton(name).click();
+    await clic(this.removeButton(name), 'Quitar ' + name + ' del carrito');
   }
 
   async goToCart() {
-    await this.cartLink.click();
+    await clic(this.cartLink, 'Abrir carrito');
   }
 
   async sortByPrice(order: 'lohi' | 'hilo') {
-    await this.sortDropdown.selectOption(order);
+    await seleccionar(this.sortDropdown, order, 'Ordenar por precio ' + order);
   }
 }

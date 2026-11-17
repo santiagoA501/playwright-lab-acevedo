@@ -1,4 +1,5 @@
-﻿import type { Locator, Page } from '@playwright/test';
+﻿import { clic, escribir } from '../utils/acciones';
+import type { Locator, Page } from '@playwright/test';
 
 export class CheckoutPage {
   readonly firstNameInput: Locator;
@@ -20,13 +21,13 @@ export class CheckoutPage {
   }
 
   async fillInformation(firstName: string, lastName: string, postalCode: string) {
-    await this.firstNameInput.fill(firstName);
-    await this.lastNameInput.fill(lastName);
-    await this.postalCodeInput.fill(postalCode);
-    await this.continueButton.click();
+    await escribir(this.firstNameInput, firstName, 'Ingresar nombre');
+    await escribir(this.lastNameInput, lastName, 'Ingresar apellido');
+    await escribir(this.postalCodeInput, postalCode, 'Ingresar codigo postal');
+    await clic(this.continueButton, 'Clic en Continue');
   }
 
   async finish() {
-    await this.finishButton.click();
+    await clic(this.finishButton, 'Clic en Finish');
   }
 }
