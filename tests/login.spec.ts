@@ -1,7 +1,7 @@
 ﻿import { test, expect } from '@playwright/test';
 
-test('CP-001 Login exitoso', async ({ page }) => {
-  await page.goto('https://www.saucedemo.com/');
+test('CP-001 Login exitoso', { tag: '@smoke', annotation: { type: 'Caso de prueba', description: 'CP-001' } }, async ({ page }) => {
+  await page.goto('/');
   await page.getByPlaceholder('Username').fill('standard_user');
   await page.getByPlaceholder('Password').fill('secret_sauce');
   await page.getByRole('button', { name: 'Login' }).click();
@@ -11,7 +11,7 @@ test('CP-001 Login exitoso', async ({ page }) => {
 });
 
 test('CP-002 Login fallido con contraseña incorrecta', async ({ page }) => {
-  await page.goto('https://www.saucedemo.com/');
+  await page.goto('/');
   await page.getByPlaceholder('Username').fill('standard_user');
   await page.getByPlaceholder('Password').fill('incorrecta');
   await page.getByRole('button', { name: 'Login' }).click();
@@ -23,7 +23,7 @@ test('CP-002 Login fallido con contraseña incorrecta', async ({ page }) => {
 });
 
 test('CP-003 Login fallido con usuario bloqueado', async ({ page }) => {
-  await page.goto('https://www.saucedemo.com/');
+  await page.goto('/');
   await page.getByPlaceholder('Username').fill('locked_out_user');
   await page.getByPlaceholder('Password').fill('secret_sauce');
   await page.getByRole('button', { name: 'Login' }).click();
